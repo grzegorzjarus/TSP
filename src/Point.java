@@ -15,6 +15,9 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+    public String toString(){
+        return String.valueOf(this.getX())+ " " + String.valueOf(this.getY());
+    }
 
     public static double distance(Point point1, Point point2){
         return Math.sqrt((Math.pow(point1.getX()-point2.getX(),2)+ Math.pow(point1.getY()-point2.getY(),2)));
