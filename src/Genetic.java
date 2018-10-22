@@ -12,13 +12,13 @@ public class Genetic {
         List<List<Point>> population = initialPopulation(GUI.points());
         double best = wholeDistance(population.get(0));
         for (int i = 0; i < 1000; i++) {
-            population=selection(population);
-            System.out.println("Best= "+ best);
-            for (int j = 0; j <population.size() - 1; j++) {
-                List<Point> list1=crossOver(population.get(j));
-                if(wholeDistance(list1)<best){
-                    best=wholeDistance(list1);
-                    population.set(j,list1);
+            population = selection(population);
+            System.out.println("Best= " + best);
+            for (int j = 0; j < population.size() - 1; j=j+2) {
+                List<Point> list1 = crossOver(population.get(j),population.get(j+1));
+                if (wholeDistance(list1) < best) {
+                    best = wholeDistance(list1);
+                    population.set(j, list1);
                 }
             }
         }
@@ -90,9 +90,9 @@ public class Genetic {
     public static List<List<Point>> selection(List<List<Point>> list) {
         List<List<Point>> result = new ArrayList<>();
         List<List<Point>> selectionList = new ArrayList<>();
-        double last=findLast(list);
+        double last = findLast(list);
         for (int i = 0; i < list.size(); i++) {
-            for (int j = 0; j < last - wholeDistance(list.get(i))+1; j++) {
+            for (int j = 0; j < last - wholeDistance(list.get(i)) + 1; j++) {
                 selectionList.add(list.get(i));
             }
         }
@@ -104,22 +104,46 @@ public class Genetic {
         return result;
     }
 
-    public static List<Point> crossOver(List<Point> list){
-        double distance=wholeDistance(list);
+    public static List<Point> crossOver(List<Point> list) {
+        double distance = wholeDistance(list);
         List<Point> child = new ArrayList<>();
-        for(int i=0; i<list.size();){
-            int random = (int)(Math.random()*list.size());
-            if(!child.contains(list.get(random))){
+        for (int i = 0; i < list.size(); ) {
+            int random = (int) (Math.random() * list.size());
+            if (!child.contains(list.get(random))) {
                 child.add(list.get(random));
                 i++;
             }
         }
-        return wholeDistance(child)<distance? child:list;
+        return wholeDistance(child) < distance ? child : list;
+
+
     }
-    public static void printList(List<List<Point>> list){
-        for(int i=0; i<list.size(); i++){
-            for(int j=0; j<list.get(i).size(); j++){
-                System.out.print(list.get(i).get(j)+ "   ");
+
+    public static List<Point> crossOver(List<Point> parent1, List<Point> parent2) {
+
+        int start = 3;// (int) (Math.random() * parent1.size());
+        int potencialEnd = (int) (Math.random() * parent1.size()) + start + 1;
+        int end = 9;//(potencialEnd<parent1.size()? potencialEnd:parent1.size());
+
+        List<Point> copy= new ArrayList<>();//to avoid ConcurrentModificationException
+        copy.addAll(parent1);
+
+        List<Point> child = copy.subList(start, end);
+
+        for (int i = 0; i < parent2.size(); i++) {
+            Point point = parent2.get(i);
+            if (!Point.contains(child,point)) {
+                child.add(point);
+            }
+        }
+        return child;
+    }
+
+
+    public static void printList(List<List<Point>> list) {
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < list.get(i).size(); j++) {
+                System.out.print(list.get(i).get(j) + "   ");
             }
             System.out.println(" ");
         }
